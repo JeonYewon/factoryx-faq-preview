@@ -21,14 +21,6 @@
     text-rendering: optimizeLegibility;
   }
 
-  .caption {
-    color: #888;
-    font-size: 13px;
-    text-align: center;
-    max-width: 1920px;
-    line-height: 1.6;
-  }
-
   /* ---- 1920x1080 키오스크 스테이지 ---- */
   .stage {
     position: relative;
@@ -39,10 +31,170 @@
     box-shadow: 0 0 0 1px #222;
   }
 
+  /* 답변 모달이 열리면 카드 목록 전체를 블러 처리(Figma node 3213:397 "sub_모달") */
+  .stage-content {
+    filter: blur(0);
+    transition: filter var(--motion-fade-duration, 300ms) var(--motion-fade-easing, ease-out);
+  }
+  .stage-content.is-blurred {
+    filter: blur(7.5px);
+  }
+
+  .answer-dim {
+    position: absolute;
+    inset: 0;
+    background: var(--color-background-dimmed);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity var(--motion-fade-duration, 300ms) var(--motion-fade-easing, ease-out);
+  }
+  .answer-dim.is-visible {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  /* 답변 모달 — Figma node 3213:397 기준 */
+  .answer-modal {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%) scale(0.96);
+    width: 1000px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 40px;
+    padding: 48px 48px 64px;
+    /*
+     * Figma 코드 변환은 border-white(불투명)로 나오지만, 실제 스크린샷 픽셀 대조 결과 불투명이 아니라
+     * 반투명 흰색(피크 약 100/255, 배경 대비 역산 시 대략 25~33% 알파) — FAQ 카드 테두리(rgba(255,255,255,0.25))와
+     * 같은 패턴이라 동일 값으로 통일.
+     */
+    border: var(--border-width-1) solid rgba(255, 255, 255, 0.25);
+    border-radius: 24px; /* Figma 확인값 32px과 기존 radius 토큰(24) 중 가장 가까운 값 — 24 사용, 32는 토큰에 없어 미확정 */
+    background: linear-gradient(to bottom, #232323, #0f0f0f);
+    box-shadow: inset 0 0 40px 0 rgba(255, 255, 255, 0.25);
+    filter: drop-shadow(13px 14px 27px rgba(0, 0, 0, 0.9));
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity var(--motion-fade-duration, 300ms) var(--motion-fade-easing, ease-out),
+                transform var(--motion-fade-duration, 300ms) var(--motion-fade-easing, ease-out);
+  }
+  .answer-modal.is-visible {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+    pointer-events: auto;
+  }
+
+  .answer-modal-body {
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+    width: 100%;
+  }
+
+  .answer-head {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .answer-persona {
+    color: var(--color-text-subtler);
+    font-weight: var(--font-weight-semibold);
+    font-size: 24px;
+  }
+
+  .answer-qa {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .answer-q {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    width: 100%;
+    padding: 0 32px 32px;
+  }
+
+  .answer-q-label {
+    color: var(--color-text-default);
+    font-weight: var(--font-weight-bold);
+    font-size: var(--font-size-heading-l);
+    line-height: 1.42;
+  }
+
+  .answer-q-text {
+    flex: 1 0 0;
+    color: var(--color-text-default);
+    font-weight: var(--font-weight-bold);
+    font-size: 38px; /* Figma 확인값 — 기존 폰트 크기 토큰(heading-xxl 48 / heading-l 32)과 정확히 일치하지 않음, 미확정 */
+    line-height: 1.35;
+  }
+
+  .answer-a-box {
+    background: rgba(51, 51, 51, 0.7);
+    border-radius: var(--radius-20);
+    padding: 32px;
+    width: 100%;
+  }
+
+  .answer-a {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+  }
+
+  .answer-a-label {
+    color: var(--color-text-default);
+    font-weight: var(--font-weight-bold);
+    font-size: var(--font-size-heading-l);
+    line-height: 1.42;
+  }
+
+  .answer-a-text {
+    flex: 1 0 0;
+    color: var(--color-text-subtler);
+    font-weight: var(--font-weight-medium);
+    font-size: var(--font-size-heading-m);
+    line-height: 1.45;
+  }
+
+  .answer-a-text .white {
+    color: var(--color-text-default);
+  }
+
+  .answer-a-text p {
+    margin-bottom: 8px;
+  }
+  .answer-a-text p:last-child {
+    margin-bottom: 0;
+  }
+
+  .answer-close-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+    padding: 20px 70px;
+    border-radius: var(--radius-999);
+    border: none;
+    cursor: pointer;
+    background: linear-gradient(to right, #ffffff, #94b6f6 50%, #2974ff);
+    box-shadow: inset 0 0 25.5px 0 #74a5ff;
+    color: var(--color-text-inverse);
+    font-weight: 800; /* Pretendard ExtraBold */
+    font-size: 24px;
+    white-space: nowrap;
+  }
+
   .title {
     color: var(--color-text-default);
     font-size: 44px;
     line-height: 1.45;
+    opacity: 0; /* 진입 애니메이션으로만 나타남 */
   }
   .title .line1 { font-weight: var(--font-weight-regular); }
   .title .line2 { font-weight: 800; } /* Pretendard ExtraBold */
@@ -69,6 +221,7 @@
   .badges {
     display: flex;
     gap: 20px;
+    opacity: 0; /* 진입 애니메이션으로만 나타남 */
   }
 
   .badge {
@@ -158,6 +311,11 @@
     width: 100%;
   }
 
+  /* 펼쳐지는 동안 카드 클릭(확인 처리) 차단 */
+  .card-rows.is-locked .card {
+    pointer-events: none;
+  }
+
   .card-row {
     display: flex;
     gap: 20px;
@@ -170,7 +328,6 @@
     flex: 1 0 0;
     height: 360px;
     padding: 34px;
-    border: var(--border-width-1) solid rgba(255, 255, 255, 0.25);
     border-radius: var(--radius-20);
     display: flex;
     flex-direction: column;
@@ -178,13 +335,47 @@
     background: linear-gradient(to bottom, var(--color-neutral-850), var(--color-neutral-900));
     box-shadow: inset 0 0 20px 0 rgba(255, 255, 255, 0.25);
     cursor: pointer;
-    transition: border-color var(--motion-fade-duration, 300ms) var(--motion-fade-easing, ease-out);
+    /* 진입 전 기본 상태 = 완전 투명(pile→펼침 애니메이션 시작 전 깜빡임 방지) */
+    opacity: 0;
   }
 
-  /* 확인됨 카드 — 파란 3px 테두리 + 우상단 도장 (Figma node 3213:1127) */
-  .card.is-checked {
-    border: 3px solid #125de6;
+  .card.is-entering {
+    animation-name: card-enter;
+    animation-duration: 1000ms;
+    animation-fill-mode: forwards;
+    animation-timing-function: ease-out; /* 대부분 아래 keyframe별 세부 easing으로 override됨 */
   }
+
+  /*
+   * 0~12%: 포개진 자리에서 opacity 0→1
+   * 12~32%: 포개진 상태 유지(제자리 정지)
+   * 32~100%: 각자 최종 위치로 이동 + scale 0.82→1
+   * --pile-x/--pile-y는 JS가 카드별 실측 위치 기반으로 계산해 인라인으로 채움.
+   */
+  @keyframes card-enter {
+    0%   { opacity: 0; transform: translate(var(--pile-x, 0px), var(--pile-y, 0px)) scale(0.82); animation-timing-function: ease-out; }
+    12%  { opacity: 1; transform: translate(var(--pile-x, 0px), var(--pile-y, 0px)) scale(0.82); animation-timing-function: linear; }
+    32%  { opacity: 1; transform: translate(var(--pile-x, 0px), var(--pile-y, 0px)) scale(0.82); animation-timing-function: cubic-bezier(0.25, 0.75, 0.25, 1); }
+    100% { opacity: 1; transform: translate(0, 0) scale(1); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    /* 이동·확대 없이 페이드만 */
+    .card.is-entering {
+      animation-name: card-enter-reduced;
+      animation-duration: 260ms;
+    }
+    @keyframes card-enter-reduced {
+      0%   { opacity: 0; transform: none; }
+      100% { opacity: 1; transform: none; }
+    }
+  }
+
+  /*
+   * 확인됨 카드 표시 — 원래는 파란 3px 테두리를 넣었으나, 모든 카드(미확인 흰 테두리 + 확인됨 파란
+   * 테두리)에 다 테두리가 들어가니 시각적으로 복잡해 보인다는 피드백으로 제거. 단일 카드 크롭(node
+   * 3213:1279)도 테두리 없이 도장만으로 확인됨을 표시하고 있어, 도장 + 배지만으로 상태를 구분함.
+   */
 
   .card-top {
     display: flex;
@@ -223,15 +414,26 @@
   /* 확인되면 번호 대신 도장이 표시되므로 번호는 숨김 */
   .card.is-checked .card-index { display: none; }
 
+  /* Figma 확인값(카드마다 20~24px 근사) — 카드 테두리 안쪽, 우상단 코너에 위치 */
   .card-stamp {
     position: absolute;
-    top: -16px;
-    right: -16px;
+    top: 20px;
+    right: 22px;
     width: 80px;
     height: 80px;
     display: none;
   }
-  .card.is-checked .card-stamp { display: block; }
+  .card.is-checked .card-stamp {
+    display: block;
+    /* 도장이 찍히는 게 눈에 보이도록 팝 애니메이션 — 모달은 이 애니메이션이 끝난 뒤에 열림(JS의 STAMP_POP_DELAY 참고) */
+    animation: stamp-pop 320ms cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  @keyframes stamp-pop {
+    0%   { transform: scale(0); opacity: 0; }
+    60%  { transform: scale(1.15); opacity: 1; }
+    100% { transform: scale(1); opacity: 1; }
+  }
 
   .card-body {
     display: flex;
@@ -276,6 +478,15 @@
     align-items: center;
     justify-content: space-between;
     width: 100%;
+    opacity: 0; /* 카드가 거의 펼쳐진 뒤 JS가 페이드인 */
+  }
+
+  /* Figma node 3219:2373 — 미션완료 후 "카드 더 둘러보기"로 돌아왔을 때, 처음으로 버튼 옆에
+     "미션 완료 화면 보기" 버튼이 추가됨(동일한 스타일, gap 16px) */
+  .bottom-actions {
+    display: flex;
+    align-items: center;
+    gap: 16px;
   }
 
   .reset-btn {
@@ -302,6 +513,14 @@
     line-height: 1.6;
   }
 
+  /* 완료 화면으로 돌아가는 버튼 — 아직 3장을 다 확인하지 않은 상태에서는 표시하지 않음 */
+  .view-mission-btn {
+    display: none;
+  }
+  .view-mission-btn.is-visible {
+    display: inline-flex;
+  }
+
   .footer-note {
     color: var(--color-text-subtler);
     font-weight: var(--font-weight-medium);
@@ -312,6 +531,7 @@
 </head>
 <body>
   <div class="stage">
+    <div class="stage-content" id="stageContent">
     <div class="panel">
       <div class="top-row">
         <div class="title">
@@ -346,38 +566,132 @@
       <div class="card-rows" id="cardRows"></div>
 
       <div class="bottom-row">
-        <button class="reset-btn" type="button" onclick="location.href='attract-screen-v2.html'">
-          <img src="assets/faq-grid-v2/icon-refresh.svg" alt="" />
-          <span>처음으로</span>
-        </button>
+        <div class="bottom-actions">
+          <button class="reset-btn" type="button" id="resetBtn">
+            <img src="assets/faq-grid-v2/icon-refresh.svg" alt="" />
+            <span>처음으로</span>
+          </button>
+          <button class="reset-btn view-mission-btn" type="button" id="viewMissionBtn" onclick="location.href='faq-mission-complete.html'">
+            <img src="assets/faq-grid-v3/icon-gift.svg" alt="" />
+            <span>미션 완료 화면 보기</span>
+          </button>
+        </div>
         <p class="footer-note">* 더 자세한 내용은 상담존에서 바로 안내해 드립니다.</p>
       </div>
     </div>
+    </div>
+
+    <div class="answer-dim" id="answerDim"></div>
+
+    <div class="answer-modal" id="answerModal">
+      <div class="answer-modal-body">
+        <div class="answer-head">
+          <span class="card-tag" id="answerTag"></span>
+          <span class="answer-persona" id="answerPersona"></span>
+        </div>
+        <div class="answer-qa">
+          <div class="answer-q">
+            <p class="answer-q-label">Q.</p>
+            <div class="answer-q-text" id="answerQuestion"></div>
+          </div>
+          <div class="answer-a-box">
+            <div class="answer-a">
+              <p class="answer-a-label">A.</p>
+              <div class="answer-a-text" id="answerText"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <button class="answer-close-btn" type="button" id="answerCloseBtn">다른 질문 보기</button>
+    </div>
   </div>
 
-  <div class="caption">
-    Figma 소스: node 3213:1127 "sub_미션상태" (1920×1080, faq-grid-v2.html에 확인 인터랙션 추가). 카드를 클릭하면 확인됨 상태로 바뀌며<br />
-    (테두리 파란 3px + 우상단 도장, 번호 배지 숨김), 서로 다른 카드를 확인한 순서대로 우상단 미션 배지가 파란 원+체크로 채워집니다.<br />
-    서로 다른 카드 3장을 확인하면 faq-mission-complete.html(미션완료 리워드 화면)으로 이동합니다.<br />
-    미확인 항목: 카드별 도장 위치가 Figma 원본에서 카드마다 조금씩 달라(예: top 24px/-10px) 통일된 규칙인지 불확실 — 여기서는 모든 카드 우상단 코너로 통일.<br />
-    토큰 출처: src/styles/tokens/color.css, typography.css, spacing.css, radius.css — 미토큰화 값은 주석 참고. motion.css는 tokens.css에서 참조되지만
-    src/styles/tokens/ 폴더에 파일이 없어 var() 폴백값을 직접 지정함(기존 격차, 이번 작업 범위 아님).
-  </div>
 
   <script>
+    /*
+     * answer: node 3213:397 "sub_모달"에서 확인된 실제 답변은 1번(이용자격) 카드뿐 — 나머지 5개는
+     * Figma에 아직 답변 카피가 없어 동일한 톤으로 작성한 예시 답변(placeholder)이며 실제 서비스 전
+     * 클라이언트 확정 필요(faq-card-flip.html에서도 동일하게 예시 답변으로 표기해 온 관례를 따름).
+     */
     const faqs = [
-      { tag: "이용자격", persona: "공공기관 정보화 담당자", question: "공공기관도 이용할 수 있나요?<br />저희는 망분리 환경인데요." },
-      { tag: "신뢰 · 검증", persona: "중앙부처 AI 사업 담당 사무관", question: "NHN FactoryX는 믿을만한가요?<br />NHN Cloud와 무슨 관계인가요?" },
-      { tag: "비용 · 예산", persona: "지자체 예산 담당자", question: "GPU는 비싸다고 들었습니다. <br />예산이 많지 않은데 가능한가요?" },
-      { tag: "도입 방법", persona: "지자체 조달 담당자", question: "도입하려면 입찰 공고부터 하나요? <br />절차가 복잡할 것 같은데요." },
-      { tag: "도입 기간", persona: "공공기관 정보화 담당자", question: "도입에 얼마나 걸리나요?" },
-      { tag: "운영 부담", persona: "공공 연구기관 인프라 운영자", question: "도입하고 나면 운영이 일 아닌가요? <br />담당 인력이 부족합니다." }
+      {
+        tag: "이용자격", persona: "공공기관 정보화 담당자",
+        question: "공공기관도 이용할 수 있나요?<br />저희는 망분리 환경인데요.",
+        answer: `<p><span class="white">네.</span> NHN Cloud는 <span class="white">공공기관용 클라우드</span>를 별도로 운영하며, </p>
+          <p><span class="white">CSAP(클라우드 보안인증)</span> 기반으로 제공됩니다. </p>
+          <p>외부 클라우드를 쓸 수 없는 망분리 환경이라면 GPU 운영 플랫폼 <span class="white">GPU Live</span>를 </p>
+          <p>내부망에 직접 설치해 기관 보유 GPU를 운영할 수 있습니다. </p>
+          <p>이미 공공기관용으로 구축되어 <span class="white">실제 운영 중인 플랫폼</span>입니다.</p>`
+      },
+      {
+        tag: "신뢰 · 검증", persona: "중앙부처 AI 사업 담당 사무관",
+        question: "NHN FactoryX는 믿을만한가요?<br />NHN Cloud와 무슨 관계인가요?",
+        answer: `<p><span class="white">네.</span> NHN FactoryX는 <span class="white">NHN Cloud의 AI 인프라 전문 브랜드</span>로, 다년간 대규모 GPU 클러스터를 운영해 온 노하우를 그대로 이어받았습니다.</p>
+          <p>공공·금융 분야에서 이미 검증된 보안 체계와 안정적인 운영 실적을 보유하고 있어, 안심하고 도입을 검토하실 수 있습니다.</p>
+          <p>(예시 답변 — 실제 카피 확정 필요)</p>`
+      },
+      {
+        tag: "비용 · 예산", persona: "지자체 예산 담당자",
+        question: "GPU는 비싸다고 들었습니다. <br />예산이 많지 않은데 가능한가요?",
+        answer: `<p><span class="white">사용한 만큼만 비용을 지불하는 종량제 구조</span>라, 초기 투자 부담 없이 예산 규모에 맞춰 유연하게 시작할 수 있습니다.</p>
+          <p>기관 예산 주기에 맞춘 견적도 별도로 안내해 드립니다.</p>
+          <p>(예시 답변 — 실제 카피 확정 필요)</p>`
+      },
+      {
+        tag: "도입 방법", persona: "지자체 조달 담당자",
+        question: "도입하려면 입찰 공고부터 하나요? <br />절차가 복잡할 것 같은데요.",
+        answer: `<p>조달청 나라장터 등록 절차를 포함해 <span class="white">공공기관 표준 도입 절차</span>를 그대로 지원하며, 담당자가 전 과정을 함께 안내해 드립니다.</p>
+          <p>별도 사전 컨설팅을 통해 기관 상황에 맞는 가장 간단한 도입 경로를 제안해 드립니다.</p>
+          <p>(예시 답변 — 실제 카피 확정 필요)</p>`
+      },
+      {
+        tag: "도입 기간", persona: "공공기관 정보화 담당자",
+        question: "도입에 얼마나 걸리나요?",
+        answer: `<p><span class="white">표준 구성 기준으로 계약 이후 수 주 내</span> 구축이 가능합니다.</p>
+          <p>기관 환경과 요구 사항에 따라 정확한 일정은 사전 협의를 통해 확정됩니다.</p>
+          <p>(예시 답변 — 실제 카피 확정 필요)</p>`
+      },
+      {
+        tag: "운영 부담", persona: "공공 연구기관 인프라 운영자",
+        question: "도입하고 나면 운영이 일 아닌가요? <br />담당 인력이 부족합니다.",
+        answer: `<p>인프라 구축부터 <span class="white">24/7 모니터링, 장애 대응까지 NHN FactoryX가 직접 운영</span>을 담당해, 기관은 별도 전담 인력 없이도 서비스 활용에만 집중할 수 있습니다.</p>
+          <p>(예시 답변 — 실제 카피 확정 필요)</p>`
+      }
     ];
 
     const REWARD_THRESHOLD = 3;
-    const checkedOrder = [];
+    const STORAGE_KEY = "faqCheckedOrder";
+    const STAMP_POP_DELAY = 450; // 도장 팝 애니메이션(320ms)이 눈에 보이고 난 뒤 모달이 뜨도록 하는 지연시간(ms)
+
+    /*
+     * 미션완료 화면(faq-mission-complete.html)에서 "카드 더 둘러보기"를 누르고 돌아왔을 때
+     * 카드 확인 상태가 그대로 유지돼야 함(Figma node 3219:2373) — sessionStorage에 확인한
+     * 카드 순서를 저장해두고, 이 페이지에 다시 진입할 때 복원한다.
+     */
+    let checkedOrder = [];
+    try {
+      checkedOrder = JSON.parse(sessionStorage.getItem(STORAGE_KEY) || "[]");
+    } catch (e) {
+      checkedOrder = [];
+    }
+
     const cardRows = document.getElementById("cardRows");
     const badges = [...document.querySelectorAll(".badge")];
+    const resetBtn = document.getElementById("resetBtn");
+    const viewMissionBtn = document.getElementById("viewMissionBtn");
+
+    // 답변 모달(Figma node 3213:397) 관련 엘리먼트
+    const stageContent = document.getElementById("stageContent");
+    const answerDim = document.getElementById("answerDim");
+    const answerModal = document.getElementById("answerModal");
+    const answerTag = document.getElementById("answerTag");
+    const answerPersona = document.getElementById("answerPersona");
+    const answerQuestion = document.getElementById("answerQuestion");
+    const answerText = document.getElementById("answerText");
+    const answerCloseBtn = document.getElementById("answerCloseBtn");
+
+    // 3번째 카드를 확인한 순간 바로 이동하지 않고, 답변 모달을 닫을 때 미션완료 화면으로 이동
+    let pendingMissionComplete = false;
 
     function buildRow(items) {
       const row = document.createElement("div");
@@ -400,7 +714,16 @@
           </div>
           <div class="card-hint"><img src="assets/faq-grid-v2/icon-touch.svg" alt="" /><span>터치해서 답변 보기</span></div>
         `;
-        card.addEventListener("click", () => checkCard(card));
+        if (checkedOrder.includes(String(index))) {
+          card.classList.add("is-checked");
+        }
+        card.addEventListener("click", () => {
+          const wasAlreadyChecked = card.classList.contains("is-checked");
+          markChecked(card);
+          // 처음 확인하는 카드는 도장(stamp-pop) 애니메이션이 보일 시간을 준 뒤 모달을 연다.
+          // 이미 확인된 카드를 다시 눌러 답변만 재열람할 때는 도장이 새로 찍히지 않으므로 바로 연다.
+          setTimeout(() => openAnswerModal(faq), wasAlreadyChecked ? 0 : STAMP_POP_DELAY);
+        });
         row.appendChild(card);
       });
       return row;
@@ -409,19 +732,172 @@
     cardRows.appendChild(buildRow(faqs.slice(0, 3).map((faq, i) => ({ faq, index: i }))));
     cardRows.appendChild(buildRow(faqs.slice(3, 6).map((faq, i) => ({ faq, index: i + 3 }))));
 
-    function checkCard(card) {
+    // 복원된 확인 순서만큼(최대 3개) 미션 배지도 채워진 상태로 복원
+    checkedOrder.slice(0, REWARD_THRESHOLD).forEach((_, i) => {
+      const slot = badges[i];
+      if (slot) slot.classList.add("is-checked");
+    });
+
+    function updateViewMissionButton() {
+      viewMissionBtn.classList.toggle("is-visible", checkedOrder.length >= REWARD_THRESHOLD);
+    }
+    updateViewMissionButton();
+
+    // 카드를 확인됨 상태로 표시 — 이미 확인된 카드를 다시 눌러 답변을 재열람할 때는 아무 것도 하지 않음(멱등)
+    function markChecked(card) {
       if (card.classList.contains("is-checked")) return;
       card.classList.add("is-checked");
       checkedOrder.push(card.dataset.index);
+      sessionStorage.setItem(STORAGE_KEY, JSON.stringify(checkedOrder));
 
       const slot = badges[checkedOrder.length - 1];
       if (slot) slot.classList.add("is-checked");
 
       if (checkedOrder.length === REWARD_THRESHOLD) {
-        setTimeout(() => {
-          location.href = "faq-mission-complete.html";
-        }, 500);
+        // "미션 완료 화면 보기" 버튼은 여기서 바로 띄우지 않음 — 이 세션에서는 모달을 닫는 즉시
+        // 미션완료 화면으로 이동해버리므로 노출될 필요가 없고, 미션완료 화면에서 "카드 더 둘러보기"로
+        // 돌아왔을 때(페이지 로드 시 sessionStorage 복원 경로에서만) 나타나야 함(updateViewMissionButton
+        // 최초 호출 지점 참고).
+        pendingMissionComplete = true;
       }
+    }
+
+    function openAnswerModal(faq) {
+      answerTag.textContent = faq.tag;
+      answerPersona.textContent = faq.persona;
+      answerQuestion.innerHTML = faq.question;
+      answerText.innerHTML = faq.answer;
+      stageContent.classList.add("is-blurred");
+      answerDim.classList.add("is-visible");
+      answerModal.classList.add("is-visible");
+    }
+
+    function closeAnswerModal() {
+      stageContent.classList.remove("is-blurred");
+      answerDim.classList.remove("is-visible");
+      answerModal.classList.remove("is-visible");
+      // 이 답변이 세 번째로 확인한 카드였다면, 모달을 닫는 시점에 미션완료 화면으로 이동
+      if (pendingMissionComplete) {
+        pendingMissionComplete = false;
+        location.href = "faq-mission-complete.html";
+      }
+    }
+
+    answerCloseBtn.addEventListener("click", closeAnswerModal);
+    answerDim.addEventListener("click", closeAnswerModal);
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && answerModal.classList.contains("is-visible")) closeAnswerModal();
+    });
+
+    // 처음으로: 진행 상태 초기화 후 대기 화면으로
+    resetBtn.addEventListener("click", () => {
+      sessionStorage.removeItem(STORAGE_KEY);
+      location.href = "attract-screen-v2.html";
+    });
+
+    /* ---- 진입 애니메이션: 카드가 중앙에 포개진 채 등장 → 각자 자리로 펼쳐짐 ---- */
+    const title = document.querySelector(".title");
+    const bottomRow = document.querySelector(".bottom-row");
+    const CARD_DURATION = 1000; // .is-entering의 animation-duration(ms)과 반드시 일치시킬 것
+    const CARD_STAGGER = 20;
+
+    function prefersReducedMotion() {
+      return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    }
+
+    /* 카드가 최종 그리드 레이아웃 상태일 때(진입 전, opacity만 0인 상태)만 정확히 측정 가능 */
+    function measureCardPileDeltas(cards) {
+      const centers = cards.map((card) => {
+        const r = card.getBoundingClientRect();
+        return { x: r.left + r.width / 2, y: r.top + r.height / 2 };
+      });
+      const gridCenter = centers.reduce(
+        (acc, c) => ({ x: acc.x + c.x / centers.length, y: acc.y + c.y / centers.length }),
+        { x: 0, y: 0 }
+      );
+      return centers.map((c) => ({ dx: gridCenter.x - c.x, dy: gridCenter.y - c.y }));
+    }
+
+    function fadeIn(el, duration, delay) {
+      return el.animate(
+        [{ opacity: 0 }, { opacity: 1 }],
+        { duration, delay: delay || 0, easing: "ease-out", fill: "both" }
+      ).finished;
+    }
+
+    function cardAnimationEnd(card) {
+      return new Promise((resolve) => {
+        function onEnd(e) {
+          if (e.target !== card) return;
+          if (e.animationName !== "card-enter" && e.animationName !== "card-enter-reduced") return;
+          card.removeEventListener("animationend", onEnd);
+          resolve();
+        }
+        card.addEventListener("animationend", onEnd);
+      });
+    }
+
+    /* 애니메이션 종료 후 pile 관련 인라인 스타일/클래스를 걷어내고 최종 상태를 명시적으로 고정 */
+    function settleCard(card) {
+      card.classList.remove("is-entering");
+      card.style.removeProperty("--pile-x");
+      card.style.removeProperty("--pile-y");
+      card.style.removeProperty("animation-delay");
+      card.style.removeProperty("z-index");
+      card.style.animation = "none";
+      card.style.opacity = "1";
+      card.style.transform = "none";
+    }
+
+    async function playEntrance() {
+      const allCards = [...cardRows.querySelectorAll(".card")];
+      cardRows.classList.add("is-locked");
+
+      const reduced = prefersReducedMotion();
+
+      // 1) 제목 + 미션 배지 페이드인 (220ms)
+      await Promise.all([fadeIn(title, 220), fadeIn(document.getElementById("badges"), 220)]);
+
+      if (reduced) {
+        await Promise.all(
+          allCards.map((card, i) => {
+            card.style.animationDelay = i * CARD_STAGGER + "ms";
+            card.classList.add("is-entering");
+            return cardAnimationEnd(card).then(() => settleCard(card));
+          })
+        );
+        await fadeIn(bottomRow, 200);
+        cardRows.classList.remove("is-locked");
+        return;
+      }
+
+      // 2) 카드: 중앙에 포개진 채 등장 → 잠깐 유지 → 각자 자리로 펼쳐짐
+      const deltas = measureCardPileDeltas(allCards);
+      const mid = (allCards.length - 1) / 2;
+      allCards.forEach((card, i) => {
+        const d = deltas[i];
+        const stackX = (i - mid) * 7; // 가로 약 7px씩 어긋나게
+        const stackY = (i - mid) * 6; // 세로 약 6px씩 어긋나게
+        card.style.setProperty("--pile-x", d.dx + stackX + "px");
+        card.style.setProperty("--pile-y", d.dy + stackY + "px");
+        card.style.zIndex = String(allCards.length - i); // 1번 카드가 맨 위
+        card.style.animationDelay = i * CARD_STAGGER + "ms";
+        card.classList.add("is-entering");
+      });
+
+      // 3) 하단 안내/처음으로 버튼은 카드가 "거의" 펼쳐졌을 때(마지막 카드 85% 지점) 등장
+      const lastStart = (allCards.length - 1) * CARD_STAGGER;
+      const almostDone = lastStart + CARD_DURATION * 0.85;
+      setTimeout(() => fadeIn(bottomRow, 200), almostDone);
+
+      await Promise.all(allCards.map((card) => cardAnimationEnd(card).then(() => settleCard(card))));
+      cardRows.classList.remove("is-locked");
+    }
+
+    if (document.fonts && document.fonts.ready) {
+      document.fonts.ready.then(playEntrance).catch(playEntrance);
+    } else {
+      playEntrance();
     }
   </script>
 </body>

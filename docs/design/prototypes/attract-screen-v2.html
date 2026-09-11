@@ -23,13 +23,6 @@
     text-rendering: optimizeLegibility;
   }
 
-  .caption {
-    color: #888;
-    font-size: 13px;
-    text-align: center;
-    max-width: 1920px;
-  }
-
   /*
    * ---- 1920x1080 키오스크 스테이지 (node 3203:267) ----
    * "시작하기" 클릭 시 페이지 이동으로 faq-grid-v3.html(카드 확인 인터랙션이 실제로 동작하는
@@ -241,7 +234,7 @@
       </div>
     </div>
 
-    <button class="cta" type="button" onclick="location.href='faq-grid-v3.html'">
+    <button class="cta" type="button" onclick="sessionStorage.removeItem('faqCheckedOrder'); location.href='faq-grid-v3.html'">
       <span class="cta-surface">
         <span class="cta-glow"><img src="assets/attract-screen-v2/cta-glow.svg" alt="" /></span>
         <span class="cta-label">시작하기</span>
@@ -250,9 +243,5 @@
     </button>
   </div>
 
-  <div class="caption">
-    Figma 소스: node 3203:267(Attract), 1920×1080. "시작하기" 클릭 시 faq-grid-v3.html(카드 확인 인터랙션 + 3장 확인 시<br />
-    faq-mission-complete.html로 자동 이동)로 페이지 전환됩니다.
-  </div>
 </body>
 </html>
