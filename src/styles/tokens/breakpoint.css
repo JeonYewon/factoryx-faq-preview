@@ -1,0 +1,27 @@
+/*
+ * Breakpoint & Grid tokens extracted from Figma (NHN FactoryX design system).
+ * Source: https://www.figma.com/design/1gRSBQaE12XDhX3KoFtlYo/NHN-FactoryX?node-id=510-27583
+ */
+
+:root {
+  --breakpoint-mobile-min: 375px;
+  --breakpoint-mobile-max: 767px;
+  --breakpoint-tablet-min: 768px;
+  --breakpoint-tablet-max: 1279px;
+  --breakpoint-desktop-min: 1280px;
+
+  --grid-mobile-columns: 4;
+  --grid-mobile-margin: 16px;
+  --grid-mobile-gutter: 16px;
+  --grid-mobile-container: 343px;
+
+  --grid-tablet-columns: 6;
+  --grid-tablet-margin: 40px;
+  --grid-tablet-gutter: 16px;
+  --grid-tablet-container: 688px;
+
+  --grid-desktop-columns: 12;
+  --grid-desktop-margin: 100px;
+  --grid-desktop-gutter: 20px;
+  --grid-desktop-container: 1720px;
+}

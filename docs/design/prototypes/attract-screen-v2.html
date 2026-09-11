@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<title>Kiosk Attract 화면 — Figma 구현 (node 3203:267)</title>
+<!-- 프로토타입 전용 CDN 폰트: 실제 구현에서는 프로젝트에 내장된 Pretendard 폰트 파일을 사용할 것 -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css" />
+<!-- 실제 등록된 디자인 토큰을 그대로 불러와서 사용 (색상/타이포그래피/스페이싱/래디우스) -->
+<link rel="stylesheet" href="../../../src/styles/tokens.css" />
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: #0a0a0a;
+    font-family: var(--font-family-pretendard), "Pretendard", sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: var(--spacing-40) 0;
+    gap: var(--spacing-16);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+
+  .caption {
+    color: #888;
+    font-size: 13px;
+    text-align: center;
+    max-width: 1920px;
+  }
+
+  /*
+   * ---- 1920x1080 키오스크 스테이지 (node 3203:267) ----
+   * "시작하기" 클릭 시 페이지 이동으로 faq-grid-v3.html(카드 확인 인터랙션이 실제로 동작하는
+   * 유일한 버전)로 이동함. 예전에는 이 파일 안에 FAQ 카드 목록을 정적으로 복제해 넣고 JS
+   * 전환 애니메이션만 재생했는데, 그 복제본은 클릭해도 카드가 선택되지 않는 별개의 사본이라
+   * 혼란을 줘서 제거함 — 카드 목록의 단일 소스는 이제 faq-grid-v3.html 하나뿐.
+   */
+  .stage {
+    position: relative;
+    width: 1920px;
+    height: 1080px;
+    background: var(--color-background-default);
+    overflow: hidden;
+    box-shadow: 0 0 0 1px #222;
+  }
+
+  .bg-grid {
+    position: absolute;
+    left: 312px;
+    top: 0px;
+    width: 2260.56px;
+    height: 1080px;
+  }
+
+  .logo {
+    position: absolute;
+    left: 50%;
+    top: 82.5px;
+    transform: translateX(-50%);
+    width: 240px;
+    height: 30.48px;
+  }
+
+  .content {
+    position: absolute;
+    left: 50%;
+    top: calc(50% - 75.5px);
+    transform: translate(-50%, -50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 30px;
+    text-align: center;
+  }
+
+  .subcopy {
+    color: var(--color-text-default);
+    opacity: var(--opacity-80);
+    font-weight: var(--font-weight-medium);
+    font-size: 30px;
+    line-height: 1.6;
+    white-space: nowrap;
+  }
+
+  .headline {
+    color: var(--color-text-default);
+    font-weight: 800;
+    font-size: 70px;
+    line-height: 1.5;
+    white-space: nowrap;
+  }
+
+  .headline .accent {
+    color: var(--color-text-accent);
+  }
+
+  .badge {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    width: 603px;
+    justify-content: center;
+  }
+
+  .badge img {
+    width: 32px;
+    height: 32px;
+    flex-shrink: 0;
+  }
+
+  .badge p {
+    font-weight: var(--font-weight-medium);
+    font-size: 38px;
+    line-height: 1.6;
+    white-space: nowrap;
+  }
+
+  .badge .white { color: var(--color-text-default); }
+  .badge .accent { color: var(--color-text-accent); font-weight: 800; }
+
+  /* CTA: 시작하기 버튼 — Figma node 3203:390 */
+  .cta {
+    position: absolute;
+    left: 50%;
+    top: 707px;
+    display: inline-flex;
+    border-radius: var(--radius-999);
+    cursor: pointer;
+    border: none;
+    text-decoration: none;
+    -webkit-tap-highlight-color: transparent;
+    transform-origin: 50% 50%;
+    --press-scale: 1;
+    transform: translateX(-50%) scale(var(--press-scale));
+  }
+
+  .cta:active { --press-scale: 0.97; }
+  .cta:not(:active) { transition: --press-scale 220ms ease-out; }
+
+  @property --press-scale {
+    syntax: '<number>';
+    inherits: false;
+    initial-value: 1;
+  }
+
+  .cta::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    pointer-events: none;
+    box-shadow: 0 0 0 0 rgba(142, 203, 255, 0);
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .cta { animation: cta-heartbeat 2.4s ease-in-out infinite; }
+    .cta::before { animation: cta-heartbeat-ring 2.4s ease-out infinite; }
+  }
+
+  @keyframes cta-heartbeat {
+    0%   { transform: translateX(-50%) scale(var(--press-scale)); }
+    45%  { transform: translateX(-50%) scale(calc(1.025 * var(--press-scale))); }
+    100% { transform: translateX(-50%) scale(var(--press-scale)); }
+  }
+
+  @keyframes cta-heartbeat-ring {
+    0%   { box-shadow: 0 0 0 0   rgba(142, 203, 255, 0); }
+    18%  { box-shadow: 0 0 0 3px rgba(142, 203, 255, 0.5); }
+    70%  { box-shadow: 0 0 0 12px rgba(142, 203, 255, 0); }
+    100% { box-shadow: 0 0 0 12px rgba(142, 203, 255, 0); }
+  }
+
+  .cta-surface {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+    padding: 20px 100px;
+    border-radius: inherit;
+    overflow: hidden;
+    background: linear-gradient(90deg, #ffffff 0%, #94b6f6 50%, #2974ff 100%);
+    box-shadow: inset 0 0 25.5px 0 #74a5ff;
+  }
+
+  .cta-glow {
+    position: absolute;
+    left: 50%;
+    top: 70.5px;
+    transform: translateX(-50%);
+    width: 187.5px;
+    height: 112.5px;
+    mix-blend-mode: plus-lighter;
+    pointer-events: none;
+  }
+
+  .cta-glow img {
+    position: absolute;
+    inset: -80% -48%;
+    width: 196%;
+    height: 260%;
+  }
+
+  .cta-label {
+    position: relative;
+    z-index: 1;
+    color: var(--color-text-inverse);
+    font-weight: 800;
+    font-size: 37px;
+    line-height: 1.6;
+    white-space: nowrap;
+  }
+
+  .cta-icon {
+    position: relative;
+    z-index: 1;
+    width: 33px;
+    height: 33px;
+    flex-shrink: 0;
+  }
+</style>
+</head>
+<body>
+  <div class="stage">
+    <img class="bg-grid" src="assets/attract-screen-v2/bg-union.svg" alt="" />
+    <img class="logo" src="assets/attract-screen-v2/logo.svg" alt="NHN FactoryX" />
+
+    <div class="content">
+      <p class="subcopy">공공기관 담당자들이 가장 많이 묻는 질문, 카드를 뽑아 확인해 보세요.</p>
+      <div class="headline">
+        우리 기관에도 NHN FactoryX 수준의<br />
+        <span class="accent">AI 인프라 도입</span>이 가능할까요?
+      </div>
+      <div class="badge">
+        <img src="assets/attract-screen-v2/icon-gift.svg" alt="" />
+        <p>
+          <span class="white">카드 </span><span class="accent">3장</span><span class="white">을 확인하면 </span><span class="accent">기념품</span><span class="white">을 드려요!</span>
+        </p>
+      </div>
+    </div>
+
+    <button class="cta" type="button" onclick="location.href='faq-grid-v3.html'">
+      <span class="cta-surface">
+        <span class="cta-glow"><img src="assets/attract-screen-v2/cta-glow.svg" alt="" /></span>
+        <span class="cta-label">시작하기</span>
+        <img class="cta-icon" src="assets/attract-screen-v2/icon-send.svg" alt="" />
+      </span>
+    </button>
+  </div>
+
+  <div class="caption">
+    Figma 소스: node 3203:267(Attract), 1920×1080. "시작하기" 클릭 시 faq-grid-v3.html(카드 확인 인터랙션 + 3장 확인 시<br />
+    faq-mission-complete.html로 자동 이동)로 페이지 전환됩니다.
+  </div>
+</body>
+</html>

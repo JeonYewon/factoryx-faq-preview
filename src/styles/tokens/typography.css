@@ -1,0 +1,167 @@
+/*
+ * Typography tokens extracted from Figma (NHN FactoryX design system).
+ * Source: https://www.figma.com/design/1gRSBQaE12XDhX3KoFtlYo/NHN-FactoryX?node-id=53-5379
+ */
+
+:root {
+  --font-family-pretendard: "Pretendard"; /* figma: typo/family/type. 참고: font-size/font family = "Pretendard Variable" 라는 별도 변수도 존재 (정리 필요) */
+
+  --font-weight-regular: 400; /* figma: typo/font-weight/regular */
+  --font-weight-medium: 500; /* figma: typo/font-weight/medium */
+  --font-weight-semibold: 600; /* figma: typo/font-weight/semibold */
+  --font-weight-bold: 700; /* figma: typo/font-weight/bold */
+  --font-weight-black: 900; /* 미확인 (제안): display-l-black, display-m-black에서 리터럴로만 확인, 명명된 변수 없음 */
+
+  --letter-spacing-none: 0; /* 모든 스타일에서 0으로 확인 */
+
+  /* font-size: 변수로 확인됨 */
+  --font-size-body-xxxs: 13px; /* figma: font-size/body/xxxs */
+  --font-size-body-xxs: 14px; /* figma: font-size/body/xxs */
+  --font-size-body-xs: 15px; /* figma: font-size/body/xs */
+  --font-size-body-s: 16px; /* figma: font-size/body/s */
+  --font-size-body-m: 18px; /* figma: font-size/body/m */
+  --font-size-body-l: 20px; /* figma: font-size/body/l */
+  --font-size-heading-xl: 40px; /* figma: font-size/heading/xl */
+
+  /* font-size: 표(table)에서만 확인, 대응 변수 없음 (미확인) */
+  --font-size-heading-xxl: 48px;
+  --font-size-heading-l: 32px;
+  --font-size-heading-m: 28px;
+  --font-size-heading-s: 26px;
+  --font-size-heading-xs: 24px;
+  --font-size-display-xxl: 80px;
+  --font-size-display-xl: 72px;
+  --font-size-display-l: 70px;
+  --font-size-display-m: 68px;
+  --font-size-display-s: 58px;
+  --font-size-display-xs: 56px;
+
+  /* type scale (이름 = Figma 문서 표에 표기된 이름). line-height는 %값 그대로 */
+  --typography-display-xxl-bold-size: var(--font-size-display-xxl);
+  --typography-display-xxl-bold-weight: var(--font-weight-bold);
+  --typography-display-xxl-bold-line-height: 120%;
+
+  --typography-display-xl-bold-size: var(--font-size-display-xl);
+  --typography-display-xl-bold-weight: var(--font-weight-bold);
+  --typography-display-xl-bold-line-height: 120%;
+
+  --typography-display-l-black-size: var(--font-size-display-l);
+  --typography-display-l-black-weight: var(--font-weight-black);
+  --typography-display-l-black-line-height: 120%;
+
+  --typography-display-m-black-size: var(--font-size-display-m);
+  --typography-display-m-black-weight: var(--font-weight-black);
+  --typography-display-m-black-line-height: 120%;
+
+  --typography-display-s-semibold-size: var(--font-size-display-s);
+  --typography-display-s-semibold-weight: var(--font-weight-semibold);
+  --typography-display-s-semibold-line-height: 127%;
+
+  --typography-display-xs-bold-size: var(--font-size-display-xs);
+  --typography-display-xs-bold-weight: var(--font-weight-bold);
+  --typography-display-xs-bold-line-height: 125%;
+
+  --typography-heading-xxl-bold-size: var(--font-size-heading-xxl);
+  --typography-heading-xxl-bold-weight: var(--font-weight-bold);
+  --typography-heading-xxl-bold-line-height: 130%;
+
+  --typography-heading-xl-bold-size: var(--font-size-heading-xl);
+  --typography-heading-xl-bold-weight: var(--font-weight-bold);
+  --typography-heading-xl-bold-line-height: 135%;
+
+  --typography-heading-l-bold-size: var(--font-size-heading-l);
+  --typography-heading-l-bold-weight: var(--font-weight-bold);
+  --typography-heading-l-bold-line-height: 142%;
+
+  --typography-heading-m-bold-size: var(--font-size-heading-m);
+  --typography-heading-m-bold-weight: var(--font-weight-bold);
+  --typography-heading-m-bold-line-height: 145%;
+
+  --typography-heading-s-bold-size: var(--font-size-heading-s);
+  --typography-heading-s-bold-weight: var(--font-weight-bold);
+  --typography-heading-s-bold-line-height: 145%;
+
+  --typography-heading-xs-bold-size: var(--font-size-heading-xs);
+  --typography-heading-xs-bold-weight: var(--font-weight-bold);
+  --typography-heading-xs-bold-line-height: 160%;
+
+  --typography-heading-xs-regular-size: var(--font-size-heading-xs);
+  --typography-heading-xs-regular-weight: var(--font-weight-regular);
+  --typography-heading-xs-regular-line-height: 160%;
+
+  --typography-body-l-bold-size: var(--font-size-body-l);
+  --typography-body-l-bold-weight: var(--font-weight-bold);
+  --typography-body-l-bold-line-height: 160%;
+
+  --typography-body-l-semibold-size: var(--font-size-body-l);
+  --typography-body-l-semibold-weight: var(--font-weight-semibold);
+  --typography-body-l-semibold-line-height: 160%;
+
+  --typography-body-l-medium-size: var(--font-size-body-l);
+  --typography-body-l-medium-weight: var(--font-weight-medium);
+  --typography-body-l-medium-line-height: 160%;
+
+  --typography-body-l-regular-size: var(--font-size-body-l);
+  --typography-body-l-regular-weight: var(--font-weight-regular);
+  --typography-body-l-regular-line-height: 160%;
+
+  --typography-body-m-bold-size: var(--font-size-body-m);
+  --typography-body-m-bold-weight: var(--font-weight-bold);
+  --typography-body-m-bold-line-height: 167%;
+
+  --typography-body-m-semibold-size: var(--font-size-body-m);
+  --typography-body-m-semibold-weight: var(--font-weight-semibold);
+  --typography-body-m-semibold-line-height: 167%;
+
+  --typography-body-m-medium-size: var(--font-size-body-m);
+  --typography-body-m-medium-weight: var(--font-weight-medium);
+  --typography-body-m-medium-line-height: 167%;
+
+  --typography-body-m-regular-size: var(--font-size-body-m);
+  --typography-body-m-regular-weight: var(--font-weight-regular);
+  --typography-body-m-regular-line-height: 167%;
+
+  --typography-body-s-bold-size: var(--font-size-body-s);
+  --typography-body-s-bold-weight: var(--font-weight-bold);
+  --typography-body-s-bold-line-height: 170%;
+
+  --typography-body-s-medium-size: var(--font-size-body-s);
+  --typography-body-s-medium-weight: var(--font-weight-medium);
+  --typography-body-s-medium-line-height: 170%;
+
+  --typography-body-s-regular-size: var(--font-size-body-s);
+  --typography-body-s-regular-weight: var(--font-weight-regular);
+  --typography-body-s-regular-line-height: 170%;
+
+  --typography-body-xs-bold-size: var(--font-size-body-xs);
+  --typography-body-xs-bold-weight: var(--font-weight-bold);
+  --typography-body-xs-bold-line-height: 172%;
+
+  --typography-body-xs-medium-size: var(--font-size-body-xs);
+  --typography-body-xs-medium-weight: var(--font-weight-medium);
+  --typography-body-xs-medium-line-height: 172%;
+
+  --typography-body-xs-regular-size: var(--font-size-body-xs);
+  --typography-body-xs-regular-weight: var(--font-weight-regular);
+  --typography-body-xs-regular-line-height: 172%;
+
+  --typography-body-xxs-bold-size: var(--font-size-body-xxs);
+  --typography-body-xxs-bold-weight: var(--font-weight-bold);
+  --typography-body-xxs-bold-line-height: 175%;
+
+  --typography-body-xxs-semibold-size: var(--font-size-body-xxs);
+  --typography-body-xxs-semibold-weight: var(--font-weight-semibold);
+  --typography-body-xxs-semibold-line-height: 175%;
+
+  --typography-body-xxs-medium-size: var(--font-size-body-xxs);
+  --typography-body-xxs-medium-weight: var(--font-weight-medium);
+  --typography-body-xxs-medium-line-height: 175%;
+
+  --typography-body-xxs-regular-size: var(--font-size-body-xxs);
+  --typography-body-xxs-regular-weight: var(--font-weight-regular);
+  --typography-body-xxs-regular-line-height: 175%;
+
+  --typography-body-xxxs-regular-size: var(--font-size-body-xxxs);
+  --typography-body-xxxs-regular-weight: var(--font-weight-regular);
+  --typography-body-xxxs-regular-line-height: 178%;
+}

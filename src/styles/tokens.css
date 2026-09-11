@@ -1,0 +1,18 @@
+/*
+ * Design tokens entry point (NHN FactoryX design system).
+ * Source: https://www.figma.com/design/1gRSBQaE12XDhX3KoFtlYo/NHN-FactoryX?node-id=53-284
+ *
+ * 카테고리별로 파일이 분리되어 있습니다 (색상/타이포그래피/스페이싱/래디우스/오퍼시티/브레이크포인트).
+ * 각 파일의 출처, 미확인 항목, 충돌 사항은 파일 상단 주석과 docs/design/DESIGN.md를 참고하세요.
+ *
+ * motion(duration/easing): Figma 원본 없음. Kiosk FAQ 대기 화면을 위해 새로 제안한 값만 있음
+ * (tokens/motion.css — 전부 '제안', docs/design/DESIGN.md 참고).
+ * components(Icon/Button/Input 등): 토큰이 아니라 토큰의 "사용처"라 이 폴더에 포함하지 않음 — 별도 문서화 예정.
+ */
+
+@import "./tokens/color.css";
+@import "./tokens/typography.css";
+@import "./tokens/spacing.css";
+@import "./tokens/radius.css";
+@import "./tokens/opacity.css";
+@import "./tokens/breakpoint.css";

@@ -1,0 +1,18 @@
+/*
+ * Radius tokens extracted from Figma (NHN FactoryX design system).
+ * Source: https://www.figma.com/design/1gRSBQaE12XDhX3KoFtlYo/NHN-FactoryX?node-id=649-8606
+ * Figma 토큰명 배지로 이름·값 모두 확인됨.
+ */
+
+:root {
+  --radius-0: 0px; /* figma: radius/none, radius-0 */
+  --radius-4: 4px; /* figma: radius/4, radius-4 */
+  --radius-6: 6px; /* figma: radius/6, radius-6 */
+  --radius-8: 8px; /* figma: radius/8, radius-8 */
+  --radius-12: 12px; /* figma: radius/12, radius-12 */
+  --radius-16: 16px; /* figma: radius/16, radius-16 */
+  --radius-20: 20px; /* figma: radius/20, radius-20 */
+  --radius-24: 24px; /* figma: radius/24, radius-24 */
+  --radius-999: 999px; /* figma: radius/999, radius-999 */
+  --border-width-1: 1px; /* figma: border-width/1 */
+}

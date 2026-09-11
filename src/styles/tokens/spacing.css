@@ -1,0 +1,37 @@
+/*
+ * Spacing Scale tokens extracted from Figma (NHN FactoryX design system).
+ * Source: https://www.figma.com/design/1gRSBQaE12XDhX3KoFtlYo/NHN-FactoryX?node-id=649-8136
+ *
+ * Naming: px 값 기준 제안명 — Figma 'spacing/N' 변수는 프레임 간 값 충돌이 있어
+ * 이름으로 채택하지 않음 (예: spacing/4 = 16 in Breakpoint/Spacing Scale/Radius,
+ * spacing/4 = 4 in Color/Opacity). 자세한 내용은 docs/design/DESIGN.md 참고.
+ */
+
+:root {
+  --spacing-0: 0px;
+  --spacing-4: 4px;
+  --spacing-6: 6px;
+  --spacing-8: 8px;
+  --spacing-12: 12px;
+  --spacing-14: 14px;
+  --spacing-16: 16px;
+  --spacing-20: 20px;
+  --spacing-24: 24px;
+  --spacing-28: 28px;
+  --spacing-32: 32px;
+  --spacing-36: 36px;
+  --spacing-40: 40px;
+  --spacing-44: 44px;
+  --spacing-48: 48px;
+  --spacing-52: 52px;
+  --spacing-56: 56px;
+  --spacing-60: 60px;
+  --spacing-64: 64px;
+  --spacing-80: 80px;
+  --spacing-100: 100px;
+  --spacing-120: 120px;
+  --spacing-140: 140px;
+  --spacing-160: 160px;
+  --spacing-180: 180px;
+  --spacing-200: 200px;
+}

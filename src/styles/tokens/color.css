@@ -1,0 +1,163 @@
+/*
+ * Color tokens extracted from Figma (NHN FactoryX design system).
+ * Source: https://www.figma.com/design/1gRSBQaE12XDhX3KoFtlYo/NHN-FactoryX?node-id=447-14020
+ *
+ * Structure:
+ *   1) Primitive  — raw color values. Confirmed in Figma (hex values are Figma-confirmed).
+ *   2) Semantic   — reference primitives by name via var()/rgb(), instead of repeating hex.
+ *
+ * IMPORTANT: Figma's Variables API only returns final resolved values, not alias chains.
+ * The grouping of "which semantic token points to which primitive" below is OUR PROPOSAL
+ * (제안), built by matching resolved hex values — it is NOT a confirmed Figma alias
+ * relationship. Where no Figma-named primitive existed for a repeated hex, a new
+ * primitive name was proposed (marked 제안 in the comment).
+ */
+
+:root {
+  /* ---------------------------------------------------------------- */
+  /* 1) Primitive palette                                              */
+  /* ---------------------------------------------------------------- */
+
+  /* figma: Primary/primary */
+  --color-black: #000000;
+  --color-black-rgb: 0 0 0;
+
+  /* figma: Neutral/white, White, 02. Grayscale/white, color/white (중복 정의 — 대표값 하나로 통일) */
+  --color-white: #ffffff;
+  --color-white-rgb: 255 255 255;
+
+  /* figma: Neutral/50 */
+  --color-neutral-50: #f2f2f2;
+  --color-neutral-50-rgb: 242 242 242;
+
+  /* figma: Neutral/100 */
+  --color-neutral-100: #e6e6e6;
+
+  /* figma: Neutral/150 */
+  --color-neutral-150: #d9d9d9;
+
+  /* figma: Neutral/400 */
+  --color-neutral-400: #999999;
+
+  /* 제안: Figma 원시 변수명 미확인, color/border/basic 값에서 추출 */
+  --color-neutral-200: #e4e4e7;
+
+  /* 제안: Figma 원시 변수명 미확인, color/text/basic 값에서 추출 */
+  --color-neutral-950: #09090b;
+
+  /* 제안: Figma 원시 변수명 미확인, color/text·icon/inverse-subtle 등에서 추출 */
+  --color-neutral-600: #737373;
+
+  /* 제안: Figma 원시 변수명 미확인, color/icon/inverse-muted 값에서 추출 */
+  --color-neutral-700: #4d4d4d;
+
+  /* 제안: Figma 원시 변수명 미확인, color/surface/subtle, button/secondary-fill, action/primary-hover 값에서 추출 (3곳 중복 → 원시화로 통일) */
+  --color-neutral-800: #262626;
+
+  /* 제안: Figma 변수 아님 — FAQ 카드 배경 그라데이션 상단색 (raw fill, node 3207:801 등, 2026-09-11 확인) */
+  --color-neutral-850: #282828;
+
+  /* 제안: Figma 변수 아님 — FAQ 카드 배경 그라데이션 하단색 (raw fill, node 3207:801 등, 2026-09-11 확인) */
+  --color-neutral-900: #0b0d10;
+
+  /* 제안: Figma 원시 변수명 미확인, color/icon/tertiary 값에서 추출 */
+  --color-neutral-350: #9f9fa9;
+
+  /* figma: Gray/800 */
+  --color-gray-800: #1d2939;
+
+  /* figma: Gray/900 */
+  --color-gray-900: #101828;
+
+  /* figma: "Neutral/Gray 900 - #111111" — Gray/900(#101828)과 이름은 유사하나 값이 다름. 확인 필요, 별도 보존 */
+  --color-gray-900-alt: #111111;
+
+  /* figma: "Grayscale / Gray6 #CCCCCC" */
+  --color-gray-6: #cccccc;
+
+  /* 제안: Figma 원시 변수명 미확인, color/text·icon/accent 값에서 추출 */
+  --color-blue-500: #125de6;
+  --color-blue-500-rgb: 18 93 230;
+
+  /* 제안: Figma 원시 변수명 미확인, color/text·icon/accent-subtle 값에서 추출 */
+  --color-blue-400: #417deb;
+
+  /* 제안: Figma 원시 변수명 미확인, color/*\/danger, input/border-error 값에서 추출 */
+  --color-red-500: #da1e28;
+
+  /* ---------------------------------------------------------------- */
+  /* 2) Semantic tokens — reference primitives above (제안 매핑)       */
+  /* ---------------------------------------------------------------- */
+
+  /* color / background */
+  --color-background-default: var(--color-black); /* figma: color/background/default */
+  --color-background-inverse: var(--color-white); /* figma: color/background/inverse */
+  --color-background-dimmed: rgb(var(--color-black-rgb) / 80%); /* figma: color/background/dimmed */
+
+  /* color / surface */
+  --color-surface-default: var(--color-black); /* figma: color/surface/default */
+  --color-surface-subtle: var(--color-neutral-800); /* figma: color/surface/subtle */
+  --color-surface-inverse: var(--color-white); /* figma: color/surface/inverse */
+  --color-surface-inverse-subtle: rgb(var(--color-white-rgb) / 10%); /* figma: color/surface/inverse-subtle (원본 알파 약 10.2%) */
+  --color-surface-inverse-variant: var(--color-neutral-50); /* figma: color/surface/inverse-variant */
+  --color-surface-navigation: rgb(var(--color-neutral-50-rgb) / 80%); /* figma: color/surface/surface-navigation */
+
+  /* color / border */
+  --color-border-basic: var(--color-neutral-200); /* figma: color/border/basic */
+  --color-border-default: rgb(var(--color-white-rgb) / 20%); /* figma: color/border/default */
+  --color-border-strong: var(--color-white); /* figma: color/border/strong */
+  --color-border-accent: rgb(var(--color-blue-500-rgb) / 60%); /* figma: color/border/accent */
+  --color-border-inverse-default: var(--color-neutral-100); /* figma: color/border/inverse-default */
+
+  /* color / text */
+  --color-text-basic: var(--color-neutral-950); /* figma: color/text/basic */
+  --color-text-default: var(--color-white); /* figma: color/text/default */
+  --color-text-subtle: rgb(var(--color-white-rgb) / 80%); /* figma: color/text/subtle */
+  --color-text-subtler: rgb(var(--color-white-rgb) / 60%); /* figma: color/text/subtler */
+  --color-text-muted: rgb(var(--color-white-rgb) / 40%); /* figma: color/text/muted */
+  --color-text-inverse: var(--color-black); /* figma: color/text/inverse */
+  --color-text-inverse-subtle: var(--color-neutral-600); /* figma: color/text/inverse-subtle */
+  --color-text-accent: var(--color-blue-500); /* figma: color/text/accent */
+  --color-text-accent-subtle: var(--color-blue-400); /* figma: color/text/accent-subtle */
+  --color-text-danger: var(--color-red-500); /* figma: color/text/danger */
+
+  /* color / divider */
+  --color-divider-default: rgb(var(--color-white-rgb) / 20%); /* figma: color/divider/default */
+  --color-divider-inverse-default: var(--color-neutral-100); /* figma: color/divider/inverse-default */
+  --color-divider-inverse-subtle: var(--color-neutral-50); /* figma: color/divider/inverse-subtle */
+
+  /* color / icon */
+  --color-icon-default: var(--color-white); /* figma: color/icon/default */
+  --color-icon-subtle: rgb(var(--color-white-rgb) / 60%); /* figma: color/icon/subtle */
+  --color-icon-tertiary: var(--color-neutral-350); /* figma: color/icon/tertiary */
+  --color-icon-accent: var(--color-blue-500); /* figma: color/icon/accent */
+  --color-icon-accent-subtle: var(--color-blue-400); /* figma: color/icon/accent-subtle */
+  --color-icon-inverse: var(--color-black); /* figma: color/icon/inverse */
+  --color-icon-inverse-muted: var(--color-neutral-700); /* figma: color/icon/inverse-muted */
+  --color-icon-danger: var(--color-red-500); /* figma: color/icon/danger */
+
+  /* color / button */
+  --color-button-primary-fill: var(--color-white); /* figma: color/button/primary-fill */
+  --color-button-secondary-fill: var(--color-neutral-800); /* figma: color/button/secondary-fill */
+  --color-button-tertiary-fill: var(--color-black); /* figma: color/button/tertiary-fill */
+  --color-button-transparent-fill: rgb(var(--color-white-rgb) / 0%); /* figma: color/button/transparent-fill */
+  --color-button-outline-border: var(--color-white); /* figma: color/button/outline-border */
+  --color-button-outline-border-inverse: var(--color-black); /* figma: color/button/outline-border-inverse */
+
+  /* color / element */
+  --color-element-primary: var(--color-black); /* figma: color/element/primary */
+  --color-element-accent: var(--color-blue-500); /* figma: color/element/accent */
+  --color-element-inverse: var(--color-white); /* figma: color/element/inverse */
+  --color-element-disabled: rgb(var(--color-white-rgb) / 16%); /* figma: color/element/disabled (원본 알파 약 16.1%) */
+
+  /* color / input */
+  --color-input-surface: rgb(var(--color-white-rgb) / 10%); /* figma: color/input/surface (원본 알파 약 10.2%) */
+  --color-input-border: rgb(var(--color-white-rgb) / 20%); /* figma: color/input/border */
+  --color-input-surface-disabled: rgb(var(--color-white-rgb) / 16%); /* figma: color/input/surface-disabled (원본 알파 약 16.1%) */
+  --color-input-surface-readonly: rgb(var(--color-white-rgb) / 16%); /* figma: color/input/surface-readolny (원본 변수명 오타 추정, 알파 약 16.1%) */
+  --color-input-border-error: var(--color-red-500); /* figma: color/input/border-error */
+
+  /* color / action */
+  --color-action-primary-hover: var(--color-neutral-800); /* figma: color/action/primary-hover */
+  --color-action-transparent-fill: rgb(var(--color-white-rgb) / 0%); /* figma: color/action/transparent-fill — button-transparent-fill과 값 중복 */
+}
