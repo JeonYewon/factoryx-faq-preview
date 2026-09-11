@@ -108,20 +108,17 @@
     transform: translate(-50%, -50%);
   }
 
+  /* Figma 갱신(node 3213:1226) — "미션" 라벨 제거, 큰 그라데이션 숫자만 표시 */
   .badge-num {
     position: relative;
     z-index: 1;
-    color: rgba(214, 228, 255, 0.4);
-    font-weight: var(--font-weight-semibold);
-    font-size: 20px;
-  }
-
-  .badge-label {
-    position: relative;
-    z-index: 1;
-    color: rgba(214, 228, 255, 0.4);
     font-weight: 800; /* Pretendard ExtraBold */
-    font-size: 33px;
+    font-size: 40px;
+    background: linear-gradient(to bottom, #ccdefe, #72b0ff);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
   }
 
   .panel {
@@ -172,14 +169,15 @@
     width: 100%;
   }
 
+  /* Figma 갱신(node 3203:704) — 배경 채움 대신 테두리 + 더 밝은 파란색(accent-subtle)으로 변경(가독성 개선) */
   .card-tag {
     display: inline-flex;
     align-items: center;
     justify-content: center;
     padding: 2px 11px;
     border-radius: var(--radius-6);
-    background: rgb(var(--color-blue-500-rgb) / 30%);
-    color: var(--color-text-accent);
+    border: var(--border-width-1) solid var(--color-text-accent-subtle);
+    color: var(--color-text-accent-subtle);
     font-weight: var(--font-weight-bold);
     font-size: var(--font-size-body-m);
     line-height: 1.65;
@@ -331,19 +329,25 @@
   .modal-heading .modal-title .white { color: var(--color-text-default); }
   .modal-heading .modal-title .accent { color: var(--color-text-accent-subtle); }
 
+  /*
+   * 박수 손 애니메이션 — "clapping-transparent-hq.webp"(6프레임 애니메이션 WebP, 투명 배경).
+   * Figma에는 이미지 채움(fill)으로 들어가 있어 첫 프레임만 정지 이미지로 내려받아지므로(Figma의
+   * 구조적 한계 — 움직이는 프레임 데이터 자체를 보존하지 않음), 애니메이션 재생을 위해 사용자가
+   * 직접 제공한 원본 webp 파일(다운로드 폴더)을 그대로 사용. 프레임 200x200 정사각형.
+   */
   .clapping-hands {
-    width: 398px;
-    height: 208.938px;
+    width: 200px;
+    height: 200px;
     overflow: hidden;
     position: relative;
   }
 
   .clapping-hands img {
     position: absolute;
-    left: 0;
-    top: 0;
+    inset: 0;
     width: 100%;
-    height: 107.15%; /* Figma 원본 이미지가 프레임보다 살짝 크게(확대) 배치됨 */
+    height: 100%;
+    object-fit: cover;
   }
 
   .modal-desc {
@@ -383,7 +387,9 @@
     border-radius: var(--radius-999);
     border: none;
     cursor: pointer;
-    font-weight: var(--font-weight-bold);
+    /* Figma 실제 스크린샷 대조 결과 Bold(700)보다 두꺼운 ExtraBold(800) — 코드 추출 텍스트 스타일은
+       Bold로 나왔지만 픽셀 비교 시 뚜렷이 더 두꺼움 */
+    font-weight: 800;
     font-size: 24px;
     color: var(--color-text-inverse);
     white-space: nowrap;
@@ -413,22 +419,19 @@
         </div>
         <div class="badges">
           <div class="badge">
-            <img class="badge-ring-outer" src="assets/faq-mission-complete/step-ring-dashed.png" alt="" />
-            <img class="badge-ring" src="assets/faq-mission-complete/step-ring-dashed.png" alt="" />
+            <img class="badge-ring-outer" src="assets/faq-mission-complete/step-ring-dashed-blue.png" alt="" />
+            <img class="badge-ring" src="assets/faq-mission-complete/step-ring-dashed-blue.png" alt="" />
             <span class="badge-num">01</span>
-            <span class="badge-label">미션</span>
           </div>
           <div class="badge">
-            <img class="badge-ring-outer" src="assets/faq-mission-complete/step-ring-dashed.png" alt="" />
-            <img class="badge-ring" src="assets/faq-mission-complete/step-ring-dashed.png" alt="" />
+            <img class="badge-ring-outer" src="assets/faq-mission-complete/step-ring-dashed-blue.png" alt="" />
+            <img class="badge-ring" src="assets/faq-mission-complete/step-ring-dashed-blue.png" alt="" />
             <span class="badge-num">02</span>
-            <span class="badge-label">미션</span>
           </div>
           <div class="badge">
-            <img class="badge-ring-outer" src="assets/faq-mission-complete/step-ring-dashed.png" alt="" />
-            <img class="badge-ring" src="assets/faq-mission-complete/step-ring-dashed.png" alt="" />
+            <img class="badge-ring-outer" src="assets/faq-mission-complete/step-ring-dashed-blue.png" alt="" />
+            <img class="badge-ring" src="assets/faq-mission-complete/step-ring-dashed-blue.png" alt="" />
             <span class="badge-num">03</span>
-            <span class="badge-label">미션</span>
           </div>
         </div>
       </div>
@@ -517,7 +520,7 @@
         <div class="modal-heading">
           <p class="modal-title"><span class="white">미션완료! </span><span class="accent">기념품 증정!</span></p>
           <div class="clapping-hands">
-            <img src="assets/faq-mission-complete/clapping-hands.png" alt="박수 치는 손 일러스트" />
+            <img src="assets/faq-mission-complete/clapping-hands.webp" alt="박수 치는 손 애니메이션" />
           </div>
         </div>
         <div class="modal-desc">
