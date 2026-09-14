@@ -331,10 +331,12 @@
      Figma가 보고하는 채워진 값은 #ecf3fe 18.571% / #3a80ff 91.429%이지만, 그 값 그대로 CSS
      linear-gradient에 넣으면 실제 렌더(node 3213:1228 스크린샷)보다 상단이 훨씬 밝게 나옴 —
      Figma 그라데이션 핸들이 레이어 박스 밖까지 걸쳐 있어 퍼센트가 박스 기준과 다른 것으로 보임.
-     실제 렌더 스크린샷을 픽셀 샘플링해 박스 0%/100% 기준으로 역산한 근사값으로 대체(미확정, 스크린샷 실측) */
+     실제 렌더 스크린샷을 픽셀 샘플링해 박스 0%/100% 기준으로 역산한 근사값으로 대체(미확정, 스크린샷 실측).
+     카드 안 작은 스탬프(node 3232:29)도 동일한 채움이라 같은 근사 그라데이션을 공유함 — 두 값을
+     따로 역산하면 서로 미세하게 달라 보여서, 배지+스탬프 두 렌더를 함께 샘플링해 하나로 통일함 */
   .badge.is-checked {
     border: none;
-    background: linear-gradient(to bottom, #bdcefc, #80aeff 50%, #509aff);
+    background: linear-gradient(to bottom, #ddecfc, #a5c5fd 25%, #7eacfe 50%, #66a2fe 75%, #58a1ff);
     animation: check-pop var(--motion-check-pop-duration, 220ms) var(--motion-check-pop-easing, cubic-bezier(0.34, 1.56, 0.64, 1));
   }
   /* Figma 갱신 — 확인됨 상태에서는 숫자 라벨 없이 체크 아이콘만 표시 */
@@ -460,19 +462,61 @@
   /* 확인되면 번호 대신 도장이 표시되므로 번호는 숨김 */
   .card.is-checked .card-index { display: none; }
 
-  /* Figma 확인값(카드마다 20~24px 근사) — 카드 테두리 안쪽, 우상단 코너에 위치 */
+  /* Figma 확인값(카드마다 20~24px 근사) — 카드 테두리 안쪽, 우상단 코너에 위치.
+     상단 진행 배지(.badge)와 같은 채움을 쓰는 컴포넌트라, 단일 SVG 파일 대신 배지와 동일하게
+     CSS 그라데이션 + 레이어 구조로 구현 — 일부 브라우저에서 SVG 내부 필터/블렌드가 <img>로 감쌌을 때
+     깨지는 문제가 있어 이 방식이 더 안전하고, 배지와 색도 100% 동일하게 맞출 수 있음 */
   .card-stamp {
     position: absolute;
     top: 20px;
     right: 22px;
     width: 80px;
     height: 80px;
+    border-radius: 50%;
+    overflow: hidden;
+    background: linear-gradient(to bottom, #ddecfc, #a5c5fd 25%, #7eacfe 50%, #66a2fe 75%, #58a1ff);
     display: none;
   }
   .card.is-checked .card-stamp {
     display: block;
     /* 도장이 찍히는 게 눈에 보이도록 팝 애니메이션 — 답변 모달을 닫은 뒤에 찍힘(JS의 markChecked/closeAnswerModal 참고) */
     animation: stamp-pop 320ms cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  .card-stamp-ring {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 67.429px;
+    height: 67.429px;
+    transform: translate(-50%, -50%);
+  }
+  /* 배지(.badge-glow)와 동일 비율(80/140)로 축소 배치한 하단 글로우 */
+  .card-stamp-glow {
+    position: absolute;
+    left: 50%;
+    top: 78px;
+    width: 67.786px;
+    height: 64.286px;
+    transform: translateX(-50%);
+    mix-blend-mode: plus-lighter;
+    pointer-events: none;
+  }
+  .card-stamp-glow img {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 170.643px;
+    height: 167.143px;
+    transform: translate(-50%, -50%);
+  }
+  /* Figma 확인값(node 3232:30) — 체크 아이콘 자체는 배지보다 상대적으로 조금 더 큼(0.643 스케일) */
+  .card-stamp-check {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 35.143px;
+    height: 27.643px;
+    transform: translate(-50%, -50%);
   }
 
   @keyframes stamp-pop {
@@ -758,7 +802,11 @@
         card.className = "card";
         card.dataset.index = index;
         card.innerHTML = `
-          <img class="card-stamp" src="assets/faq-grid-v3/stamp.svg" alt="확인됨" />
+          <div class="card-stamp" role="img" aria-label="확인됨">
+            <img class="card-stamp-ring" src="assets/faq-grid-v3/badge-ring-checked.svg" alt="" />
+            <div class="card-stamp-glow"><img src="assets/faq-grid-v3/badge-glow-checked.svg" alt="" /></div>
+            <img class="card-stamp-check" src="assets/faq-grid-v3/icon-check-navy.svg" alt="" />
+          </div>
           <div class="card-top">
             <div class="card-head">
               <span class="card-tag">${faq.tag}</span>
