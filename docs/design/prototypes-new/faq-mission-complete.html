@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<title>Kiosk FAQ 미션완료(리워드) 오버레이 — Figma 구현 (node 3214:1770)</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css" />
+<link rel="stylesheet" href="../../../src/styles/tokens.css" />
+<!-- Lottie 재생 라이브러리 — 프로젝트에 기존 재생기가 없어 CDN으로 로드(다른 프로토타입의 Pretendard 폰트 CDN 로딩과 동일한 방식) -->
+<script src="https://cdn.jsdelivr.net/npm/lottie-web@5.12.2/build/player/lottie.min.js"></script>
+<!--
+  confetti-top.json(원본)을 그대로 감싼 JS 파일을 상대경로로 불러옴. file://로 직접 열 때는 fetch/XHR로 로컬
+  JSON을 읽어오는 게 브라우저에서 차단돼(lottie의 기본 path 옵션이 내부적으로 이 방식 사용) 재생이 안 되는
+  문제가 있어, <script src>로 로드해 animationData로 바로 넘기는 방식을 사용함(다른 프로토타입들처럼
+  로컬 서버 없이 더블클릭으로 열어도 재생되도록).
+-->
+<script src="assets/faq-mission-complete/confetti-top-data.js"></script>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: #0a0a0a;
+    font-family: var(--font-family-pretendard), "Pretendard", sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: var(--spacing-40) 0;
+    gap: var(--spacing-16);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+
+  /* ---- 1920x1080 키오스크 스테이지 (Figma node 3214:1770 "sub_미션완료") ---- */
+  .stage {
+    position: relative;
+    width: 1920px;
+    height: 1080px;
+    background: var(--color-background-default);
+    overflow: hidden;
+    box-shadow: 0 0 0 1px #222;
+  }
+
+  /* 배경 레이어: FAQ 카드 목록 화면을 그대로 깔고 블러 처리(모달에 초점을 주기 위함) */
+  .bg-layer {
+    position: absolute;
+    left: 75px;
+    top: 40px;
+    width: 1770px;
+    display: flex;
+    flex-direction: column;
+    gap: 29px;
+    filter: blur(7.5px);
+  }
+
+  .bg-top-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+  }
+
+  .title {
+    color: var(--color-text-default);
+    font-size: 44px;
+    line-height: 1.45;
+  }
+  .title .line1 { font-weight: var(--font-weight-regular); }
+  .title .line2 { font-weight: 800; } /* Pretendard ExtraBold — 900(black) 토큰과 별개 */
+  .title .accent { color: var(--color-text-accent); }
+
+  /* 우상단 미션 배지 3개 — Figma에 활성/비활성 구분 없이 동일 스타일로 표시됨(미확인/불일치 가능성 있음) */
+  .badges {
+    display: flex;
+    gap: 20px;
+  }
+
+  .badge {
+    position: relative;
+    width: 140px;
+    height: 140px;
+    border-radius: 50%;
+    background: var(--color-black);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+  }
+
+  /* Figma 실제 스크린샷 대조 결과, 바깥 테두리도 CSS border-dashed가 아니라 안쪽 점선
+     링(Ellipse5859)과 동일한 촘촘한 점선 에셋을 두 겹(바깥 140px + 안쪽 118px)으로 겹친 형태 */
+  .badge-ring-outer {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 140px;
+    height: 140px;
+    transform: translate(-50%, -50%);
+  }
+
+  .badge-ring {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 118px;
+    height: 118px;
+    transform: translate(-50%, -50%);
+  }
+
+  /* Figma 갱신(node 3213:1226) — "미션" 라벨 제거, 큰 그라데이션 숫자만 표시 */
+  .badge-num {
+    position: relative;
+    z-index: 1;
+    font-weight: 800; /* Pretendard ExtraBold */
+    font-size: 40px;
+    background: linear-gradient(to bottom, #ccdefe, #72b0ff);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+  }
+
+  .panel {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    width: 100%;
+  }
+
+  .card-rows {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    width: 100%;
+  }
+
+  .card-row {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+    width: 100%;
+  }
+
+  .card {
+    position: relative;
+    flex: 1 0 0;
+    height: 360px;
+    padding: 34px;
+    border: var(--border-width-1) solid rgba(255, 255, 255, 0.25);
+    border-radius: var(--radius-20);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    background: linear-gradient(to bottom, var(--color-neutral-850), var(--color-neutral-900));
+    box-shadow: inset 0 0 20px 0 rgba(255, 255, 255, 0.25);
+  }
+
+  .card-top {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .card-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+  }
+
+  /* Figma 갱신(node 3203:704) — 배경 채움 대신 테두리 + 더 밝은 파란색(accent-subtle)으로 변경(가독성 개선) */
+  .card-tag {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2px 11px;
+    border-radius: var(--radius-6);
+    border: var(--border-width-1) solid var(--color-text-accent-subtle);
+    color: var(--color-text-accent-subtle);
+    font-weight: var(--font-weight-bold);
+    font-size: var(--font-size-body-m);
+    line-height: 1.65;
+  }
+
+  .card-index {
+    color: var(--color-text-muted);
+    font-weight: var(--font-weight-bold);
+    font-size: var(--font-size-heading-xs);
+    line-height: 1.6;
+    opacity: 0.5;
+  }
+
+  .card-body {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .card-persona {
+    color: var(--color-text-subtler);
+    font-weight: var(--font-weight-semibold);
+    font-size: var(--font-size-body-l);
+    line-height: 1.6;
+  }
+
+  .card-question {
+    color: var(--color-text-default);
+    font-weight: var(--font-weight-bold);
+    font-size: 33px; /* Figma 확인값(이번 노드 기준) */
+    line-height: 1.42;
+  }
+
+  .card-hint {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-8);
+  }
+
+  .card-hint img {
+    width: 20px;
+    height: 20px;
+  }
+
+  .card-hint span {
+    color: var(--color-text-subtler);
+    font-weight: var(--font-weight-semibold);
+    font-size: var(--font-size-body-l);
+    line-height: 1.6;
+  }
+
+  .bottom-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+  }
+
+  .reset-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 32px;
+    height: 64px;
+    border-radius: 10px; /* Figma 확인값 — 기존 radius 토큰(8/12)과 정확히 일치하지 않음 */
+    background: linear-gradient(to bottom, #4a669b, #374d76); /* Figma 확인값(이번 노드 기준) */
+    border: none;
+    cursor: pointer;
+  }
+
+  .reset-btn img {
+    width: 24px;
+    height: 24px;
+  }
+
+  .reset-btn span {
+    color: var(--color-text-default);
+    font-weight: var(--font-weight-bold);
+    font-size: var(--font-size-heading-xs);
+    line-height: 1.6;
+  }
+
+  .footer-note {
+    color: var(--color-text-subtler);
+    font-weight: var(--font-weight-medium);
+    font-size: var(--font-size-body-l);
+    line-height: 1.6;
+  }
+
+  /* 딤 오버레이 */
+  .dim {
+    position: absolute;
+    inset: 0;
+    background: var(--color-background-dimmed);
+  }
+
+  /*
+   * 화면 맨 위에서 떨어지는 컨페티 — 원본 confetti-top.json이 1080x1080 정사각형이라,
+   * 컨테이너도 정확히 1:1(1920x1920)로 맞춰 비율 왜곡 없이 그대로 스케일업만 함.
+   * .stage가 overflow:hidden(1920x1080)이라 정사각형의 아래쪽은 자동으로 잘려나가고,
+   * 화면 폭 전체(1920px)에 걸쳐 위쪽에서 떨어지는 부분만 노출됨 — 크롭/찌그러짐 없음.
+   * 모달보다 나중에 배치해 맨 앞에서 떨어지되, pointer-events:none이라 버튼 클릭은 막지 않음.
+   */
+  .top-confetti {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 1920px;
+    height: 1920px;
+    z-index: 10;
+    pointer-events: none;
+  }
+
+  /* 미션완료(리워드) 모달 */
+  .modal {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 902px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 60px;
+  }
+
+  .modal-top {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 32px;
+    width: 100%;
+  }
+
+  .modal-heading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .modal-heading .modal-title {
+    font-weight: var(--font-weight-bold);
+    font-size: 52px;
+    line-height: 1.35;
+    text-align: center;
+    white-space: nowrap;
+  }
+  .modal-heading .modal-title .white { color: var(--color-text-default); }
+  .modal-heading .modal-title .accent { color: var(--color-text-accent-subtle); }
+
+  /*
+   * 박수 손 애니메이션 — "clapping-transparent-hq.webp"(6프레임 애니메이션 WebP, 투명 배경).
+   * Figma에는 이미지 채움(fill)으로 들어가 있어 첫 프레임만 정지 이미지로 내려받아지므로(Figma의
+   * 구조적 한계 — 움직이는 프레임 데이터 자체를 보존하지 않음), 애니메이션 재생을 위해 사용자가
+   * 직접 제공한 원본 webp 파일(다운로드 폴더)을 그대로 사용. 프레임 200x200 정사각형.
+   */
+  .clapping-hands {
+    width: 200px;
+    height: 200px;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .clapping-hands img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .modal-desc {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    align-items: center;
+    text-align: center;
+    width: 100%;
+  }
+
+  .modal-desc .desc-lines {
+    color: var(--color-text-default);
+    font-weight: var(--font-weight-bold);
+    font-size: var(--font-size-heading-m);
+    line-height: 1.45;
+  }
+
+  .modal-desc .desc-time {
+    color: var(--color-text-muted);
+    font-weight: var(--font-weight-medium);
+    font-size: var(--font-size-body-l);
+    line-height: 1.6;
+  }
+
+  .modal-actions {
+    display: flex;
+    gap: 16px;
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+    padding: 24px 40px;
+    border-radius: var(--radius-999);
+    border: none;
+    cursor: pointer;
+    /* Figma 실제 스크린샷 대조 결과 Bold(700)보다 두꺼운 ExtraBold(800) — 코드 추출 텍스트 스타일은
+       Bold로 나왔지만 픽셀 비교 시 뚜렷이 더 두꺼움 */
+    font-weight: 800;
+    font-size: 24px;
+    color: var(--color-text-inverse);
+    white-space: nowrap;
+  }
+
+  .btn-primary {
+    position: relative;
+    background: linear-gradient(to right, #ffffff, #94b6f6 50%, #2974ff);
+    box-shadow: inset 0 0 25.5px 0 #74a5ff;
+  }
+
+  .btn-secondary {
+    width: 333px;
+    padding: 24px 70px;
+    background: linear-gradient(97.66deg, #ffffff 1.68%, #eaeaea 99.83%);
+  }
+</style>
+</head>
+<body>
+  <div class="stage">
+
+    <div class="bg-layer">
+      <div class="bg-top-row">
+        <div class="title">
+          <p class="line1">궁금한 카드를 터치해 보세요.</p>
+          <p class="line2"><span class="accent">3장</span> 확인하면 <span class="accent">미션 완료!</span></p>
+        </div>
+        <div class="badges">
+          <div class="badge">
+            <img class="badge-ring-outer" src="assets/shared/step-ring-dashed-blue.png" alt="" />
+            <img class="badge-ring" src="assets/shared/step-ring-dashed-blue.png" alt="" />
+            <span class="badge-num">01</span>
+          </div>
+          <div class="badge">
+            <img class="badge-ring-outer" src="assets/shared/step-ring-dashed-blue.png" alt="" />
+            <img class="badge-ring" src="assets/shared/step-ring-dashed-blue.png" alt="" />
+            <span class="badge-num">02</span>
+          </div>
+          <div class="badge">
+            <img class="badge-ring-outer" src="assets/shared/step-ring-dashed-blue.png" alt="" />
+            <img class="badge-ring" src="assets/shared/step-ring-dashed-blue.png" alt="" />
+            <span class="badge-num">03</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="card-rows">
+          <div class="card-row">
+            <div class="card">
+              <div class="card-top">
+                <div class="card-head"><span class="card-tag">이용자격</span><span class="card-index">01</span></div>
+                <div class="card-body">
+                  <p class="card-persona">공공기관 정보화 담당자</p>
+                  <p class="card-question">공공기관도 이용할 수 있나요?<br />저희는 망분리 환경인데요.</p>
+                </div>
+              </div>
+              <div class="card-hint"><img src="assets/faq-grid-v2/icon-touch.svg" alt="" /><span>터치해서 답변 보기</span></div>
+            </div>
+            <div class="card">
+              <div class="card-top">
+                <div class="card-head"><span class="card-tag">신뢰 · 검증</span><span class="card-index">02</span></div>
+                <div class="card-body">
+                  <p class="card-persona">중앙부처 AI 사업 담당 사무관</p>
+                  <p class="card-question">NHN FactoryX는 믿을만한가요?<br />NHN Cloud와 무슨 관계인가요?</p>
+                </div>
+              </div>
+              <div class="card-hint"><img src="assets/faq-grid-v2/icon-touch.svg" alt="" /><span>터치해서 답변 보기</span></div>
+            </div>
+            <div class="card">
+              <div class="card-top">
+                <div class="card-head"><span class="card-tag">비용 · 예산</span><span class="card-index">03</span></div>
+                <div class="card-body">
+                  <p class="card-persona">지자체 예산 담당자</p>
+                  <p class="card-question">GPU는 비싸다고 들었습니다. <br />예산이 많지 않은데 가능한가요?</p>
+                </div>
+              </div>
+              <div class="card-hint"><img src="assets/faq-grid-v2/icon-touch.svg" alt="" /><span>터치해서 답변 보기</span></div>
+            </div>
+          </div>
+          <div class="card-row">
+            <div class="card">
+              <div class="card-top">
+                <div class="card-head"><span class="card-tag">도입 방법</span><span class="card-index">04</span></div>
+                <div class="card-body">
+                  <p class="card-persona">지자체 조달 담당자</p>
+                  <p class="card-question">도입하려면 입찰 공고부터 하나요? <br />절차가 복잡할 것 같은데요.</p>
+                </div>
+              </div>
+              <div class="card-hint"><img src="assets/faq-grid-v2/icon-touch.svg" alt="" /><span>터치해서 답변 보기</span></div>
+            </div>
+            <div class="card">
+              <div class="card-top">
+                <div class="card-head"><span class="card-tag">도입 기간</span><span class="card-index">05</span></div>
+                <div class="card-body">
+                  <p class="card-persona">공공기관 정보화 담당자</p>
+                  <p class="card-question">도입에 얼마나 걸리나요?</p>
+                </div>
+              </div>
+              <div class="card-hint"><img src="assets/faq-grid-v2/icon-touch.svg" alt="" /><span>터치해서 답변 보기</span></div>
+            </div>
+            <div class="card">
+              <div class="card-top">
+                <div class="card-head"><span class="card-tag">운영 부담</span><span class="card-index">06</span></div>
+                <div class="card-body">
+                  <p class="card-persona">공공 연구기관 인프라 운영자</p>
+                  <p class="card-question">도입하고 나면 운영이 일 아닌가요? <br />담당 인력이 부족합니다.</p>
+                </div>
+              </div>
+              <div class="card-hint"><img src="assets/faq-grid-v2/icon-touch.svg" alt="" /><span>터치해서 답변 보기</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="bottom-row">
+          <button class="reset-btn" type="button" onclick="sessionStorage.removeItem('faqCheckedOrder'); location.href='logo-intro.html'">
+            <img src="assets/faq-grid-v2/icon-refresh.svg" alt="" />
+            <span>처음으로</span>
+          </button>
+          <p class="footer-note">* 더 자세한 내용은 상담존에서 바로 안내해 드립니다.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="dim"></div>
+
+    <div class="modal">
+      <div class="modal-top">
+        <div class="modal-heading">
+          <p class="modal-title"><span class="white">미션완료! </span><span class="accent">기념품 증정!</span></p>
+          <div class="clapping-hands">
+            <img src="assets/faq-mission-complete/clapping-hands.webp" alt="박수 치는 손 애니메이션" />
+          </div>
+        </div>
+        <div class="modal-desc">
+          <p class="desc-lines">FAQ 카드 3장을 모두 확인하셨습니다.<br />이 화면을 부스 스태프에게 보여주세요.</p>
+          <p class="desc-time">완료시각: 2026.09.11 10:10:40</p>
+        </div>
+      </div>
+      <div class="modal-actions">
+        <button class="btn btn-primary" type="button" onclick="sessionStorage.removeItem('faqCheckedOrder'); location.href='logo-intro.html'">기념품 받았어요(처음으로)</button>
+        <button class="btn btn-secondary" type="button" onclick="location.href='faq-grid-v3.html'">카드 더 둘러보기</button>
+      </div>
+    </div>
+
+    <div class="top-confetti" id="topConfetti" aria-hidden="true"></div>
+
+  </div>
+
+  <script>
+    /* loop:false — 화면 진입 시 1회만 재생. 다시 진입(페이지 재로드)하면 lottie가 새로 초기화되며 처음부터 재생됨. */
+    lottie.loadAnimation({
+      container: document.getElementById("topConfetti"),
+      renderer: "svg",
+      loop: false,
+      autoplay: true,
+      animationData: window.CONFETTI_TOP_ANIMATION_DATA
+    });
+  </script>
+</body>
+</html>
