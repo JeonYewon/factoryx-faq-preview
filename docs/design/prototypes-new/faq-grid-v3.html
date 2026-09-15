@@ -170,13 +170,6 @@
     margin: 0;
   }
 
-  /* 실측 근사값 — Figma 원본은 빈 줄(line-height 1.45) + 다음 줄(line-height 0.85) 조합으로
-     단락 간격을 표현하지만, 브라우저 line-height 반분배 방식이 달라 그대로 옮기면 간격이
-     더 벌어짐(스크린샷 비교 결과 약 49px vs 목표 42px). margin-top 하나로 대체해 목표 간격에 맞춤. */
-  .answer-a-text p.para-gap {
-    margin-top: var(--spacing-24);
-  }
-
   .answer-close-btn {
     display: inline-flex;
     align-items: center;
@@ -702,61 +695,53 @@
 
   <script>
     /*
-     * answer: node 3219:3220 "Frame 2087333335"에서 확인된 실제 답변 6개 전부 반영(이전엔 1번만 확정,
-     * 나머지 5개는 예시였음 — 이번에 전부 확정 카피로 교체). 줄바꿈은 Figma의 <p> 단락 구조를,
+     * answer: node 3219:3220 "모달 내용"에서 확인된 답변 6개 전부 최신 카피로 재교체(2026-09-15,
+     * 기존 확정 카피보다 전반적으로 짧아짐). 줄바꿈은 Figma의 <p> 단락 구조를,
      * 흰색 강조는 Figma의 text-white span을 그대로 따름.
      */
     const faqs = [
       {
         tag: "이용자격", persona: "공공기관 정보화 담당자",
         question: "공공기관도 이용할 수 있나요?<br />저희는 망분리 환경인데요.",
-        answer: `<p><span class="white">네.</span> NHN Cloud는 <span class="white">공공기관용 클라우드</span>를 별도로 운영하며, </p>
-          <p><span class="white">CSAP(클라우드 보안인증)</span> 기반으로 제공됩니다. </p>
-          <p class="para-gap">외부 클라우드를 쓸 수 없는 망분리 환경이라면</p>
-          <p>GPU 운영 플랫폼 <span class="white">GPU Live</span>를 내부망에 직접 설치해 </p>
-          <p>기관 보유 GPU를 운영할 수 있습니다. </p>
-          <p>이미 공공기관용으로 구축되어 <span class="white">실제 운영 중인 플랫폼</span>입니다.</p>`
+        answer: `<p><span class="white">네. CSAP 인증을 받은 공공기관용 클라우드를 별도로 운영합니다.</span></p>
+          <p>망분리 환경이라면 GPU Live를 내부망에 직접 설치해</p>
+          <p>기관 보유 GPU를 운영할 수 있습니다.</p>`
       },
       {
         tag: "신뢰 · 검증", persona: "중앙부처 AI 사업 담당 사무관",
-        question: "NHN FactoryX는 믿을만한가요?<br />NHN Cloud와 무슨 관계인가요?",
-        answer: `<p>NHN FactoryX는 <span class="white">NHN Cloud의 AI 인프라 전용 브랜드</span>입니다.</p>
-          <p class="para-gap">NHN Cloud는 서울(FactoryX 서울)과 <span class="white">광주 국가 AI 데이터센터</span>를</p>
-          <p>직접 구축·운영해왔고, 25년 정부가 추진한 AI 컴퓨팅자원 사업에서 </p>
-          <p><span class="white">최대 물량을 구축한 사업자</span>입니다.</p>`
+        question: "NHN FactoryX는 무엇인가요?<br />NHN Cloud와 무슨 관계인가요?",
+        answer: `<p><span class="white">NHN Cloud의 AI 인프라 전용 브랜드입니다.</span></p>
+          <p>광주 국가 AI 데이터센터를 직접 구축·운영하고,</p>
+          <p>2025년 정부 AI 컴퓨팅자원 사업 최대 물량을</p>
+          <p>구축한 경험을 담았습니다.</p>`
       },
       {
         tag: "비용 · 예산", persona: "지자체 예산 담당자",
-        question: "GPU는 비싸다고 들었습니다. <br />예산이 많지 않은데 가능한가요?",
-        answer: `<p>자체 구축은 서버·네트워크·냉각·인력까지 초기 투자가 수십억 단위지만, <span class="white">GPUaaS는 필요한 만큼만 쓰고 그만큼만 지불</span>하는 방식입니다. </p>
-          <p>작게 시작해 수요에 따라 늘릴 수 있어 예산 규모에 맞춘 설계가 </p>
-          <p>가능합니다.</p>
-          <p class="para-gap">유휴 GPU를 자동 회수하는 동적 할당 기술<span class="white">(GPU Live)</span>로</p>
-          <p>같은 예산에서 <span class="white">두 배의 활용</span>을 끌어냅니다.</p>
-          <p>기관 규모별 구성은 상담존에서 바로 안내해 드립니다.</p>`
+        question: "GPU는 비싸다고 들었습니다. <br />예산이 많지 않은데 가능하나요?",
+        answer: `<p><span class="white">네. 필요한 만큼만 쓰고 그만큼만 지불합니다.</span></p>
+          <p>자체 구축은 초기 투자가 수십억 단위지만,</p>
+          <p>GPUaaS는 작게 시작해 수요에 따라 늘릴 수 있습니다.</p>`
       },
       {
         tag: "도입 방법", persona: "지자체 조달 담당자",
         question: "도입하려면 입찰 공고부터 해야 하나요? <br />절차가 복잡할 것 같은데요.",
-        answer: `<p>NHN Cloud 공공기관용 클라우드는</p>
-          <p><span class="white">디지털서비스 전문계약제도</span> 대상으로, 조달청 <span class="white">디지털서비스몰</span>에서</p>
-          <p>검색해 카탈로그 계약 방식으로 <span class="white">신속 도입</span>할 수 있습니다.</p>`
+        answer: `<p><span class="white">아니요. 입찰 없이 조달청 디지털서비스몰에서 바로 계약할 수 있습니다.</span></p>
+          <p>디지털서비스 전문계약제도 대상이라 카탈로그 계약으로</p>
+          <p>신속 도입이 가능합니다.</p>`
       },
       {
         tag: "도입 기간", persona: "공공기관 정보화 담당자",
         question: "도입에 얼마나 걸리나요?",
-        answer: `<p>자체 구축이라면 GPU 확보 26주, 네트워크 장비 48주</p>
-          <p>설치까지 <span class="white">최소 52주</span>가 걸립니다.</p>
-          <p class="para-gap">NHN Cloud와 함께하시면 이미 구축된 GPU를 할당받는 방식이라</p>
-          <p><span class="white">이 대기가 없습니다.</span> 지금 상담하시면 <span class="white">내년 예산·사업 계획에 반영</span>하고,</p>
-          <p>바로 시작할 수 있습니다.</p>`
+        answer: `<p>GPUaaS는 <span class="white">1일,</span> 기관 보유 GPU를 운영하는 경우나</p>
+          <p>전용 클러스터는 규모에 따라 <span class="white">최소 2주</span>입니다.</p>`
       },
       {
         tag: "운영 부담", persona: "공공 연구기관 인프라 운영자",
         question: "도입하고 나면 운영이 일 아닌가요? <br />담당 인력이 부족합니다.",
-        answer: `<p>자원 할당·회수는 <span class="white">규칙 기반으로 자동,</span> GPU·워크로드 상태는 </p>
-          <p><span class="white">콘솔 하나에서 실시간 확인,</span> 사용량은 5분 주기로 수집되어</p>
-          <p><span class="white">일별 CSV로 증빙까지 자동</span>입니다.</p>`
+        answer: `<p><span class="white">기관 담당자는 별도 운영 인력 없이</span></p>
+          <p><span class="white">서비스 이용에만 집중하실 수 있습니다.</span></p>
+          <p>인프라 운영부터 시스템 구성·모니터링·백업·장애 대응까지</p>
+          <p>NHN Cloud와 파트너사가 함께 맡습니다.</p>`
       }
     ];
 
