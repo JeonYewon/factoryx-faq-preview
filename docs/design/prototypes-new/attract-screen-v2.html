@@ -80,19 +80,7 @@
     color: var(--color-text-accent);
   }
 
-  /* 대타이틀 글자 단위 Slit In Horizontal 효과 참고 구현 — 대기 화면이라 계속 반복 재생됨 */
-  .headline .char {
-    display: inline-block;
-    white-space: pre;
-    opacity: 0;
-  }
-
-  @keyframes slit-in-h {
-    0%   { transform: scaleX(0); opacity: 0; }
-    100% { transform: scaleX(1); opacity: 1; }
-  }
-
-  /* 서브카피/리워드 문구 — 참고 사이트(axiom-power-template)처럼 줄 전체가 마스크 안에서
+  /* 대타이틀/서브카피/리워드 문구 공통 — 참고 사이트(axiom-power-template)처럼 줄 전체가 마스크 안에서
      아래에서 위로 슬라이드되며 나타남(좌→우 단어 웨이브 아님). mask는 줄 높이만큼만 보여주고,
      inner는 mask 아래(translateY 110%)에서 시작해 제자리로 올라옴 */
   .reveal-line-mask {
@@ -249,7 +237,10 @@
 
     <div class="content">
       <p class="subcopy"><span class="reveal-line-mask"><span class="reveal-line-inner">공공기관 담당자들이 가장 많이 묻는 질문, 카드를 뽑아 확인해 보세요.</span></span></p>
-      <div class="headline" id="headline"></div>
+      <div class="headline">
+        <span class="reveal-line-mask"><span class="reveal-line-inner">우리 기관에도 NHN FactoryX 수준의</span></span><br />
+        <span class="reveal-line-mask"><span class="reveal-line-inner"><span class="accent">AI 인프라 도입</span>이 가능할까요?</span></span>
+      </div>
       <div class="badge">
         <span class="reveal-line-mask"><span class="reveal-line-inner"><img src="assets/attract-screen-v2/icon-gift.svg" alt="" /></span></span>
         <p><span class="reveal-line-mask"><span class="reveal-line-inner"><span class="white">카드 </span><span class="accent">3장</span><span class="white">을 확인하면 </span><span class="accent">기념품</span><span class="white">을 드려요!</span></span></span></p>
@@ -265,43 +256,5 @@
     </button>
   </div>
 
-  <script>
-    /*
-     * 대타이틀 Slit In Horizontal 효과 참고 구현 — 원본은 순수 텍스트 하나를 통째로 글자 단위로
-     * 쪼개지만, 이 헤드라인은 줄바꿈과 accent(파란색) 구간이 섞여 있어(<br /> + .accent span)
-     * 그 구조를 유지한 채로 구간별로 나눠 글자를 만들고, delay는 문장 전체에서 끊기지 않게 이어서 준다.
-     */
-    const headline = document.getElementById("headline");
-    const segments = [
-      { text: "우리 기관에도 NHN FactoryX 수준의" },
-      { break: true },
-      { text: "AI 인프라 도입", accent: true },
-      { text: "이 가능할까요?" }
-    ];
-
-    function playHeadlineSlit() {
-      headline.innerHTML = "";
-      let index = 0;
-      segments.forEach((segment) => {
-        if (segment.break) {
-          headline.appendChild(document.createElement("br"));
-          return;
-        }
-        segment.text.split("").forEach((ch) => {
-          const span = document.createElement("span");
-          span.textContent = ch;
-          span.className = segment.accent ? "char accent" : "char";
-          span.style.animation = `slit-in-h 0.4s forwards`;
-          span.style.animationDelay = `${index * 0.035}s`;
-          headline.appendChild(span);
-          index += 1;
-        });
-      });
-      // 반복 없이 한 번만 재생
-    }
-    playHeadlineSlit();
-    // 서브카피 / 리워드 문구는 순수 CSS(.reveal-line-mask + .reveal-line-inner)로 줄 전체가
-    // 아래에서 위로 슬라이드되며 나타남 — 별도 JS 불필요
-  </script>
 </body>
 </html>
